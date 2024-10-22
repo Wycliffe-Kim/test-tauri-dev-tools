@@ -73,7 +73,11 @@ jobs:
 
       - name: install gstreamer runtime (windows)
         if: matrix.platform == 'windows-latest'
-        run: msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart
+        run: msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart /L*V C:\\gstreamer-install.log
+
+      - name: check log (window)
+        if: matrix.platform == 'windows-latest'
+        run: cat C:\\gstreamer-install.log
 
       - name: pritenv
         run: printenv
