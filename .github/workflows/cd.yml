@@ -80,8 +80,10 @@ jobs:
         run: |
           ls
           cat C:\\gstreamer-install.log
-          cd d:\\
-          # cp -r d:\\gstreamer
+          cd D:\\
+          ls
+          cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
+          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
           ls
 
       - name: pritenv
