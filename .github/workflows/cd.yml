@@ -83,7 +83,7 @@ jobs:
           cd D:\\
           ls
           cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
-          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
+          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           ls
 
       - name: pritenv
