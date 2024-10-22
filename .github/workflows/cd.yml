@@ -67,40 +67,52 @@ jobs:
       #     echo "::add-path::C:\\Program Files\\Protobuf\\bin"
       #     protoc --version
 
-      - name: setup node
-        uses: actions/setup-node@master
-        with:
-          node-version: 18.x
+      - name: install gstreamer (windows)
+        run: |
+          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-msvc-x86_64-1.20.7.msi -o gstreamer-runtime.msi
+          msiexec /i gstreamer-runtime.msi /quiet /norestart
+          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-devel-msvc-x86_64-1.20.7.msi -o gstreamer-devel.msi
+          msiexec /i gstreamer-devel.msi /quiet /norestart
+          printenv
+          echo $GSTREAMER_1_0_ROOT_MSVC_X86_64
 
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      # - name: setup node
+      #   uses: actions/setup-node@master
+      #   with:
+      #     node-version: 18.x
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
+      # - name: install Rust stable
+      #   uses: dtolnay/rust-toolchain@stable
+      #   with:
+      #     targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: Install frontend dependencies
-        run: yarn install --network-timeout 100000
+      # - name: Rust cache
+      #   uses: swatinem/rust-cache@v2
+      #   with:
+      #     workspaces: './src-tauri -> target'
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      # - name: Install frontend dependencies
+      #   run: yarn install --network-timeout 100000
 
-      - uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          projectPath: src-tauri/
-          tagName: v__VERSION__
-          releaseName: 'v__VERSION__'
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
+      # - name: Cache Yarn dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.cache/yarn
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-yarn-
+
+      # - name: build
+      #   run: yarn tauri build
+
+      # - uses: tauri-apps/tauri-action@v0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     projectPath: src-tauri/
+      #     tagName: v__VERSION__
+      #     releaseName: 'v__VERSION__'
+      #     releaseBody: 'See the assets to download this version and install.'
+      #     releaseDraft: true
+      #     prerelease: false
+      #     args: ${{ matrix.args }}
