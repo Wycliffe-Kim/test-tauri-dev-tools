@@ -78,8 +78,10 @@ jobs:
       - name: check log (window)
         if: matrix.platform == 'windows-latest'
         run: |
+          ls -l
           cat C:\\gstreamer-install.log
           cd d:\\
+          # cp -r d:\\gstreamer
           ls
 
       - name: pritenv
