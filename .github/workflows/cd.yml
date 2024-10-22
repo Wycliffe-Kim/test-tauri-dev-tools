@@ -67,14 +67,17 @@ jobs:
       #     echo "::add-path::C:\\Program Files\\Protobuf\\bin"
       #     protoc --version
 
-      - name: install gstreamer (windows)
+      - name: install gstreamer runtime (windows)
+        if: matrix.platform == 'windows-latest'
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-msvc-x86_64-1.20.7.msi -o gstreamer-runtime.msi
           msiexec /i gstreamer-runtime.msi /quiet /norestart
-          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-devel-msvc-x86_64-1.20.7.msi -o gstreamer-devel.msi
-          msiexec /i gstreamer-devel.msi /quiet /norestart
-          printenv
-          echo $GSTREAMER_1_0_ROOT_MSVC_X86_64
+
+      - name: pritenv
+        run: printenv
+
+      - name: check
+        run: echo $GSTREAMER_1_0_ROOT_MSVC_X86_64
 
       # - name: setup node
       #   uses: actions/setup-node@master
