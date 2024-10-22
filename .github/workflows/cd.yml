@@ -78,10 +78,13 @@ jobs:
       - name: check log (window)
         if: matrix.platform == 'windows-latest'
         run: |
+          mkdir assets
           cd D:\\gstreamer
           ls
-          cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
+          cp -r D:\\gstreamer\\1.0 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
+          ls
+          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           ls
 
       - name: pritenv
