@@ -79,6 +79,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           mkdir assets
+          ls
           cd D:\\gstreamer
           ls
           cp -r D:\\gstreamer\\1.0 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
