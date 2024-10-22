@@ -78,7 +78,7 @@ jobs:
       - name: check log (window)
         if: matrix.platform == 'windows-latest'
         run: |
-          ls -l
+          ls
           cat C:\\gstreamer-install.log
           cd d:\\
           # cp -r d:\\gstreamer
