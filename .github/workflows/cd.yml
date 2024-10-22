@@ -77,7 +77,10 @@ jobs:
 
       - name: check log (window)
         if: matrix.platform == 'windows-latest'
-        run: cat C:\\gstreamer-install.log
+        run: |
+          cat C:\\gstreamer-install.log
+          cd /d
+          ls -l
 
       - name: pritenv
         run: printenv
