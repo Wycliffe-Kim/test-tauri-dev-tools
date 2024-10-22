@@ -86,6 +86,7 @@ jobs:
           cp -r D:\\gstreamer\\1.0\\msvc_x86_64 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           ls
+          cat tauri.conf.json
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           ls
 
