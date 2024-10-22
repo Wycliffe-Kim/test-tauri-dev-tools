@@ -78,8 +78,6 @@ jobs:
       - name: check log (window)
         if: matrix.platform == 'windows-latest'
         run: |
-          ls
-          cat C:\\gstreamer-install.log
           cd D:\\
           ls
           cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
