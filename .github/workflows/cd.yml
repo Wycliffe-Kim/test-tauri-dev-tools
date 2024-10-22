@@ -80,7 +80,7 @@ jobs:
         run: |
           cd D:\\gstreamer
           ls
-          cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools
+          cp -r D:\\gstreamer D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           ls
 
