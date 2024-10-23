@@ -38,7 +38,7 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
         .to_string();
 
     if let Err(error) = clear_files(&get_output_dir(app)) {
-        log::error!("{}", error.to_string());
+        log::error!("{invoker} clear_files: {}", error.to_string());
     }
 
     let gstreamer_launch_path = get_gstreamer_launch_path(app);
@@ -88,16 +88,34 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
             &playlist_location,
             &segment_location,
         ])
-        .env("DYLD_LIBRARY_PATH", gstreamer_lib_path)
-        .env("GST_PLUGIN_PATH", gstreamer_plugin_path)
-        .env("GST_PLUGIN_SCANNER", gstreamer_plugin_scanner_path)
+        .env(
+            "DYLD_LIBRARY_PATH",
+            gstreamer_lib_path
+                .to_str()
+                .unwrap_or_default()
+                .replace("\\", "\\\\"),
+        )
+        .env(
+            "GST_PLUGIN_PATH",
+            gstreamer_plugin_path
+                .to_str()
+                .unwrap_or_default()
+                .replace("\\", "\\\\"),
+        )
+        .env(
+            "GST_PLUGIN_SCANNER",
+            gstreamer_plugin_scanner_path
+                .to_str()
+                .unwrap_or_default()
+                .replace("\\", "\\\\"),
+        )
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
     {
         Ok(process) => process,
         Err(error) => {
-            log::error!("{invoker} {}", error.to_string());
+            log::error!("{invoker} Command::new {}", error.to_string());
             return Err(error.to_string());
         }
     };
