@@ -73,12 +73,15 @@ jobs:
           curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.20.7/gstreamer-1.0-1.20.7-universal.pkg -o gstreamer-runtime.pkg
           sudo installer -pkg gstreamer-runtime.pkg -target /
 
-      - name: config gstreamer (windows)
+      - name: config gstreamer (macos)
         if: matrix.platform == 'macos-latest'
         run: |
           cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
-          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+          ls
+          ls src-tauri
           cat src-tauri/tauri.conf.json
+          # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+          # cat src-tauri/tauri.conf.json
 
       - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
