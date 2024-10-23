@@ -67,22 +67,19 @@ jobs:
       #     echo "::add-path::C:\\Program Files\\Protobuf\\bin"
       #     protoc --version
 
-      - name: pull gstreamer runtime (windows)
-        if: matrix.platform == 'windows-latest'
-        run: curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-msvc-x86_64-1.20.7.msi -o C:\\gstreamer-runtime.msi
+      - name: install gstreamer (macos)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.20.7/gstreamer-1.0-1.20.7-universal.pkg -o gstreamer-runtime.pkg
+          sudo installer -pkg gstreamer-runtime.pkg -target /
+          cd cd /Library/Frameworks/GStreamer.framework
+          ls
 
-      - name: install gstreamer runtime (windows)
-        if: matrix.platform == 'windows-latest'
-        run: msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart /L*V C:\\gstreamer-install.log
-
-      - name: check log (window)
+      - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
         run: |
-          # cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
-          # mkdir assets
-          # ls
-          # cd D:\\gstreamer
-          # ls
+          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-msvc-x86_64-1.20.7.msi -o C:\\gstreamer-runtime.msi
+          msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart /L*V C:\\gstreamer-install.log
           cp -r D:\\gstreamer\\1.0\\msvc_x86_64 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           ls
@@ -92,49 +89,43 @@ jobs:
           sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\tauri.conf.json
           cat D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\tauri.conf.json
 
-      - name: pritenv
-        run: printenv
+      - name: setup node
+        uses: actions/setup-node@master
+        with:
+          node-version: 18.x
 
-      - name: check
-        run: echo $GSTREAMER_1_0_ROOT_MSVC_X86_64
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      # - name: setup node
-      #   uses: actions/setup-node@master
-      #   with:
-      #     node-version: 18.x
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
 
-      # - name: install Rust stable
-      #   uses: dtolnay/rust-toolchain@stable
-      #   with:
-      #     targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Install frontend dependencies
+        run: yarn install --network-timeout 100000
 
-      # - name: Rust cache
-      #   uses: swatinem/rust-cache@v2
-      #   with:
-      #     workspaces: './src-tauri -> target'
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-      # - name: Install frontend dependencies
-      #   run: yarn install --network-timeout 100000
+      - name: build
+        run: yarn tauri build
 
-      # - name: Cache Yarn dependencies
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ~/.cache/yarn
-      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-yarn-
-
-      # - name: build
-      #   run: yarn tauri build
-
-      # - uses: tauri-apps/tauri-action@v0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     projectPath: src-tauri/
-      #     tagName: v__VERSION__
-      #     releaseName: 'v__VERSION__'
-      #     releaseBody: 'See the assets to download this version and install.'
-      #     releaseDraft: true
-      #     prerelease: false
-      #     args: ${{ matrix.args }}
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: src-tauri/
+          tagName: v__VERSION__
+          releaseName: 'v__VERSION__'
+          releaseBody: 'See the assets to download this version and install.'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
