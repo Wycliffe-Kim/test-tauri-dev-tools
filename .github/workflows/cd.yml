@@ -76,9 +76,9 @@ jobs:
       - name: config gstreamer (windows)
         if: matrix.platform == 'macos-latest'
         run: |
-          ls
-          cd /Library/Frameworks/GStreamer.framework/Versions/Current
-          ls
+          cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
+          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+          cat src-tauri/tauri.conf.json
 
       - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
@@ -89,10 +89,9 @@ jobs:
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
         run: |
-          cp -r D:\\gstreamer\\1.0\\msvc_x86_64 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
-          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
-          cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
-          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\tauri.conf.json
+          cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
+          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+          cat src-tauri\\tauri.conf.json
 
       - name: setup node
         uses: actions/setup-node@master
