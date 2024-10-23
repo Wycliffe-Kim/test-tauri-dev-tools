@@ -25,7 +25,7 @@
     },
     "bundle": {
       "active": true,
-      "targets": "all",
+      "targets": ["dmg", "msi"],
       "identifier": "com.test-tauri-dev-tools",
       "icon": [
         "icons/32x32.png",
