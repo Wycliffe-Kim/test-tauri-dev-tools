@@ -72,14 +72,22 @@ jobs:
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.20.7/gstreamer-1.0-1.20.7-universal.pkg -o gstreamer-runtime.pkg
           sudo installer -pkg gstreamer-runtime.pkg -target /
-          cd cd /Library/Frameworks/GStreamer.framework
+
+      - name: config gstreamer (windows)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          cd /Library/Frameworks/GStreamer.framework
           ls
 
       - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.20.7/msvc/gstreamer-1.0-msvc-x86_64-1.20.7.msi -o C:\\gstreamer-runtime.msi
-          msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart /L*V C:\\gstreamer-install.log
+          msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart
+
+      - name: config gstreamer (windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
           cp -r D:\\gstreamer\\1.0\\msvc_x86_64 D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri
           ls
