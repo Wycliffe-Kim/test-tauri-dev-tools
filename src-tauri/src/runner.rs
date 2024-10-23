@@ -85,8 +85,8 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
             "max-files=100",
             "target-duration=1",
             "playlist-length=100",
-            &playlist_location,
-            &segment_location,
+            &playlist_location.replace("\\", "\\\\"),
+            &segment_location.replace("\\", "\\\\"),
         ])
         .env(
             "DYLD_LIBRARY_PATH",
