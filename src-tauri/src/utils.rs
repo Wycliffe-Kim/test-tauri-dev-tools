@@ -28,7 +28,8 @@ macro_rules! resolve_resource {
                 $app.path()
                     .resource_dir()
                     .unwrap_or_default()
-                    .to_string_lossy(),
+                    .to_str()
+                    .unwrap_or_default(),
                 $path
             ))
         } else {
@@ -37,7 +38,8 @@ macro_rules! resolve_resource {
                 $app.path()
                     .resource_dir()
                     .unwrap_or_default()
-                    .to_string_lossy(),
+                    .to_str()
+                    .unwrap_or_default(),
                 $path
             ))
         }
@@ -69,7 +71,8 @@ macro_rules! gstreamer_root_path {
                     $app.path_resolver()
                         .resource_dir()
                         .unwrap_or_default()
-                        .to_string_lossy(),
+                        .to_str()
+                        .unwrap_or_default(),
                     $path
                 ))
             } else if cfg!(target_os = "macos") {
@@ -78,7 +81,8 @@ macro_rules! gstreamer_root_path {
                     $app.path_resolver()
                         .resource_dir()
                         .unwrap_or_default()
-                        .to_string_lossy(),
+                        .to_str()
+                        .unwrap_or_default(),
                     $path
                 ))
             } else {
@@ -110,7 +114,8 @@ macro_rules! gstreamer_root_path {
                     $app.path_resolver()
                         .resource_dir()
                         .unwrap_or_default()
-                        .to_string_lossy(),
+                        .to_str()
+                        .unwrap_or_default(),
                     $windows
                 ))
             } else if cfg!(target_os = "macos") {
@@ -119,7 +124,8 @@ macro_rules! gstreamer_root_path {
                     $app.path_resolver()
                         .resource_dir()
                         .unwrap_or_default()
-                        .to_string_lossy(),
+                        .to_str()
+                        .unwrap_or_default(),
                     $macos
                 ))
             } else {
@@ -159,9 +165,15 @@ pub fn get_playlist_location(src: &str) -> String {
 
 pub fn get_segment_location(output_dir: &PathBuf) -> String {
     if cfg!(target_os = "windows") {
-        format!("location={}\\segment-%05d.ts", output_dir.to_string_lossy())
+        format!(
+            "location={}\\segment-%05d.ts",
+            output_dir.to_str().unwrap_or_default()
+        )
     } else if cfg!(target_os = "macos") {
-        format!("location={}/segment-%05d.ts", output_dir.to_string_lossy())
+        format!(
+            "location={}/segment-%05d.ts",
+            output_dir.to_str().unwrap_or_default()
+        )
     } else {
         String::new()
     }

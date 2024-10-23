@@ -51,19 +51,19 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
 
     log::info!(
         "{invoker} gstreamer_launch_path: {}",
-        gstreamer_launch_path.to_string_lossy()
+        gstreamer_launch_path.to_str().unwrap_or_default()
     );
     log::info!(
         "{invoker} gstreamer_lib_path: {}",
-        gstreamer_lib_path.to_string_lossy()
+        gstreamer_lib_path.to_str().unwrap_or_default()
     );
     log::info!(
         "{invoker} gstreamer_plugin_path: {}",
-        gstreamer_plugin_path.to_string_lossy()
+        gstreamer_plugin_path.to_str().unwrap_or_default()
     );
     log::info!(
         "{invoker} gstreamer_plugin_scanner_path: {}",
-        gstreamer_plugin_scanner_path.to_string_lossy()
+        gstreamer_plugin_scanner_path.to_str().unwrap_or_default()
     );
     log::info!("{invoker} location: {location}");
     log::info!("{invoker} playlist_location: {playlist_location}");
