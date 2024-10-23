@@ -89,6 +89,8 @@ jobs:
           cat tauri.conf.json
           cd D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\assets
           ls
+          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\tauri.conf.json
+          cat D:\\a\\test-tauri-dev-tools\\test-tauri-dev-tools\\src-tauri\\tauri.conf.json
 
       - name: pritenv
         run: printenv
