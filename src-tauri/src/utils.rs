@@ -27,7 +27,7 @@ macro_rules! resolve_resource {
                 "{}\\{}",
                 $app.path()
                     .resource_dir()
-                    .unwrap_or(PathBuf::default())
+                    .unwrap_or_default()
                     .to_string_lossy(),
                 $path
             ))
@@ -36,7 +36,7 @@ macro_rules! resolve_resource {
                 "{}/{}",
                 $app.path()
                     .resource_dir()
-                    .unwrap_or(PathBuf::default())
+                    .unwrap_or_default()
                     .to_string_lossy(),
                 $path
             ))
@@ -49,30 +49,40 @@ macro_rules! gstreamer_root_path {
     ($app:expr, $path:expr) => {
         if cfg!(debug_assertions) {
             if cfg!(target_os = "windows") {
-                std::path::PathBuf::from(format!(
+                PathBuf::from(format!(
                     "{}{}",
                     std::env::var("GSTREAMER_1_0_ROOT_MSVC_X86_64").unwrap_or(String::new()),
                     String::from($path)
                 ))
             } else if cfg!(target_os = "macos") {
-                std::path::PathBuf::from(format!(
+                PathBuf::from(format!(
                     "/Library/Frameworks/Gstreamer.framework/Versions/Current/{}",
                     String::from($path)
                 ))
             } else {
-                std::path::PathBuf::default()
+                PathBuf::default()
             }
         } else {
             if cfg!(target_os = "windows") {
-                $app.path_resolver()
-                    .resolve_resource(format!("/assets/{}", $path))
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}\\assets\\{}",
+                    $app.path_resolver()
+                        .resource_dir()
+                        .unwrap_or_default()
+                        .to_string_lossy(),
+                    $path
+                ))
             } else if cfg!(target_os = "macos") {
-                $app.path_resolver()
-                    .resolve_resource(format!("\\assets\\{}", $path))
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}/assets/{}",
+                    $app.path_resolver()
+                        .resource_dir()
+                        .unwrap_or_default()
+                        .to_string_lossy(),
+                    $path
+                ))
             } else {
-                std::path::PathBuf::default()
+                PathBuf::default()
             }
         }
     };
@@ -80,30 +90,40 @@ macro_rules! gstreamer_root_path {
     ($app:expr, $windows:expr, $macos:expr) => {
         if cfg!(debug_assertions) {
             if cfg!(target_os = "windows") {
-                std::path::PathBuf::from(format!(
+                PathBuf::from(format!(
                     "{}{}",
                     std::env::var("GSTREAMER_1_0_ROOT_MSVC_X86_64").unwrap_or(String::new()),
                     String::from($windows)
                 ))
             } else if cfg!(target_os = "macos") {
-                std::path::PathBuf::from(format!(
+                PathBuf::from(format!(
                     "/Library/Frameworks/Gstreamer.framework/Versions/Current/{}",
                     String::from($macos)
                 ))
             } else {
-                std::path::PathBuf::default()
+                PathBuf::default()
             }
         } else {
             if cfg!(target_os = "windows") {
-                $app.path_resolver()
-                    .resolve_resource(format!("\\assets\\{}", $windows))
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}\\assets\\{}",
+                    $app.path_resolver()
+                        .resource_dir()
+                        .unwrap_or_default()
+                        .to_string_lossy(),
+                    $windows
+                ))
             } else if cfg!(target_os = "macos") {
-                $app.path_resolver()
-                    .resolve_resource(format!("/assets/{}", $macos))
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}/assets/{}",
+                    $app.path_resolver()
+                        .resource_dir()
+                        .unwrap_or_default()
+                        .to_string_lossy(),
+                    $macos
+                ))
             } else {
-                std::path::PathBuf::default()
+                PathBuf::default()
             }
         }
     };
@@ -134,9 +154,7 @@ pub fn get_hls_file_name(server_id: &str) -> String {
 }
 
 pub fn get_output_dir(app: &AppHandle) -> PathBuf {
-    app.path_resolver()
-        .app_data_dir()
-        .unwrap_or(PathBuf::default())
+    app.path_resolver().app_data_dir().unwrap_or_default()
 }
 
 pub fn clear_files(output_dir: &PathBuf) -> std::io::Result<()> {
