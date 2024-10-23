@@ -63,9 +63,25 @@ macro_rules! gstreamer_root_path {
                 std::path::PathBuf::default()
             }
         } else {
-            $app.path_resolver()
-                .resolve_resource($path)
-                .unwrap_or(PathBuf::default())
+            if cfg!(target_os = "windows") {
+                PathBuf::from(format!(
+                    "{}\\assets",
+                    $app.path_resolver()
+                        .resolve_resource($path)
+                        .unwrap_or(PathBuf::default())
+                        .to_string_lossy()
+                ))
+            } else if cfg!(target_os = "macos") {
+                PathBuf::from(format!(
+                    "{}/assets",
+                    $app.path_resolver()
+                        .resolve_resource($path)
+                        .unwrap_or(PathBuf::default())
+                        .to_string_lossy()
+                ))
+            } else {
+                std::path::PathBuf::default()
+            }
         }
     };
 
@@ -87,13 +103,21 @@ macro_rules! gstreamer_root_path {
             }
         } else {
             if cfg!(target_os = "windows") {
-                $app.path_resolver()
-                    .resolve_resource($windows)
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}\\assets",
+                    $app.path_resolver()
+                        .resolve_resource($windows)
+                        .unwrap_or(PathBuf::default())
+                        .to_string_lossy()
+                ))
             } else if cfg!(target_os = "macos") {
-                $app.path_resolver()
-                    .resolve_resource($macos)
-                    .unwrap_or(PathBuf::default())
+                PathBuf::from(format!(
+                    "{}/assets",
+                    $app.path_resolver()
+                        .resolve_resource($macos)
+                        .unwrap_or(PathBuf::default())
+                        .to_string_lossy()
+                ))
             } else {
                 std::path::PathBuf::default()
             }
