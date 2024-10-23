@@ -15,6 +15,8 @@ use tokio::{
     io::{AsyncBufReadExt, BufReader},
     process::Command,
 };
+#[cfg(target_os = "windows")]
+use winapi::um::winbase::CREATE_NO_WINDOW;
 
 use crate::{
     project_root_path,
@@ -69,7 +71,8 @@ pub async fn run(app: &AppHandle, rtsp_src: &str) -> Result<(), String> {
     log::info!("{invoker} playlist_location: {playlist_location}");
     log::info!("{invoker} segment_location: {segment_location}");
 
-    let mut process = match Command::new(gstreamer_launch_path)
+    let mut command = Command::new(gstreamer_launch_path);
+    let command = command
         .args(&[
             "-v",
             "rtspsrc",
@@ -110,9 +113,14 @@ pub async fn run(app: &AppHandle, rtsp_src: &str) -> Result<(), String> {
                 .replace("\\", "\\\\"),
         )
         .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
+        .stderr(Stdio::piped());
+
+    #[cfg(target_os = "windows")]
     {
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+
+    let mut process = match command.spawn() {
         Ok(process) => process,
         Err(error) => {
             log::error!("{invoker} Command::new {}", error.to_string());
