@@ -45,7 +45,7 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
     let gstreamer_lib_path = get_gstramer_lib_path(app);
     let gstreamer_plugin_path = get_gstramer_plugin_path(app);
     let gstreamer_plugin_scanner_path = get_gstramer_plugin_scanner_path(app);
-    let location = get_location("rtsp://210.99.70.120:1935/live/cctv001.stream");
+    let location = get_location("rtsp://210.99.70.120:1935/live/cctv050.stream");
     let playlist_location = get_playlist_location(&src);
     let segment_location = get_segment_location(&output_dir);
 
