@@ -25,6 +25,23 @@ async fn greet(app: AppHandle, name: &str) -> Result<String, String> {
     Ok(format!("Hello, {}! You've been greeted from Rust!", name))
 }
 
+#[tauri::command]
+fn open_app_data_dir(app: AppHandle) {
+    let output_dir = get_output_dir(&app);
+    if let Some(app_data_dir) = output_dir.to_str() {
+        if let Err(error) = tauri::api::shell::open(&app.shell_scope(), app_data_dir, None) {
+            log::error!("open_app_data_dir failed: {}", error.to_string());
+        }
+    }
+}
+
+#[tauri::command]
+fn open_devtools(app: AppHandle) {
+    if let Some(window) = app.get_window("main") {
+        window.open_devtools();
+    }
+}
+
 fn log_format_with_timestamp(
     w: &mut dyn std::io::Write,
     now: &mut flexi_logger::DeferredNow,
@@ -69,7 +86,11 @@ async fn main() {
             init_global_logger(app);
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            open_app_data_dir,
+            open_devtools
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

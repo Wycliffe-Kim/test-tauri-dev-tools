@@ -11,6 +11,9 @@ import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import { invoke } from '@tauri-apps/api';
 import './App.css';
+import { useCommandWithKeyboardEvent } from './hooks/useCommandWithKeyboardEvent';
+import { openAppDataDir } from './tauri-commands/openAppDataDir';
+import { openDevtools } from './tauri-commands/openDevtools';
 
 function App() {
   const [greetMsg, setGreetMsg] = useState('');
@@ -20,6 +23,31 @@ function App() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke('greet', { name }));
   }
+
+  useCommandWithKeyboardEvent({
+    command: openAppDataDir,
+    name: 'openAppDataDir',
+    windows: {
+      ctrl: true,
+      shift: true,
+      key: 'd',
+    },
+    macos: {
+      meta: true,
+      shift: true,
+      key: 'd',
+    },
+  });
+  useCommandWithKeyboardEvent({
+    command: openDevtools,
+    name: 'openDevtools',
+    windows: { ctrl: true, shift: true, key: 'i' },
+    macos: {
+      meta: true,
+      shift: true,
+      key: 'i',
+    },
+  });
 
   return (
     <main className='container'>
