@@ -21,7 +21,7 @@ use crate::{
     utils::{
         clear_files, get_gstramer_lib_path, get_gstramer_plugin_path,
         get_gstramer_plugin_scanner_path, get_gstreamer_launch_path, get_hls_file_name,
-        get_output_dir,
+        get_location, get_output_dir, get_playlist_location, get_segment_location,
     },
 };
 
@@ -45,12 +45,9 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
     let gstreamer_lib_path = get_gstramer_lib_path(app);
     let gstreamer_plugin_path = get_gstramer_plugin_path(app);
     let gstreamer_plugin_scanner_path = get_gstramer_plugin_scanner_path(app);
-    let location = format!(
-        "location={}",
-        "rtsp://210.99.70.120:1935/live/cctv001.stream"
-    );
-    let playlist_location = format!("playlist-location={}", src.clone());
-    let segment_location = format!("location={}/segment-%05d.ts", output_dir.to_string_lossy());
+    let location = get_location("rtsp://210.99.70.120:1935/live/cctv001.stream");
+    let playlist_location = get_playlist_location(&src);
+    let segment_location = get_segment_location(&output_dir);
 
     log::info!(
         "{invoker} gstreamer_launch_path: {}",

@@ -149,6 +149,24 @@ pub fn get_gstramer_plugin_scanner_path(app: &AppHandle) -> PathBuf {
     )
 }
 
+pub fn get_location(rtsp_src: &str) -> String {
+    format!("location={rtsp_src}")
+}
+
+pub fn get_playlist_location(src: &str) -> String {
+    format!("playlist-location={src}")
+}
+
+pub fn get_segment_location(output_dir: &PathBuf) -> String {
+    if cfg!(target_os = "windows") {
+        format!("location={}\\segment-%05d.ts", output_dir.to_string_lossy())
+    } else if cfg!(target_os = "macos") {
+        format!("location={}/segment-%05d.ts", output_dir.to_string_lossy())
+    } else {
+        String::new()
+    }
+}
+
 pub fn get_hls_file_name(server_id: &str) -> String {
     format!("hls_play_{server_id}.m3u8")
 }
