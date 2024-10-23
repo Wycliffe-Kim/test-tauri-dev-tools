@@ -73,7 +73,7 @@ jobs:
           curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-1.24.8-universal.pkg -o gstreamer-runtime.pkg
           sudo installer -pkg gstreamer-runtime.pkg -target /
           curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-devel-1.24.8-universal.pkg -o gstreamer-devel.pkg
-          sudo installer -pkg gstreamer-devl.pkg -target /
+          sudo installer -pkg gstreamer-devel.pkg -target /
 
       - name: config gstreamer (macos)
         if: matrix.platform == 'macos-latest'
