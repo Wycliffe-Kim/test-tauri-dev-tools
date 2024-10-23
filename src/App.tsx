@@ -16,12 +16,14 @@ import { openAppDataDir } from './tauri-commands/openAppDataDir';
 import { openDevtools } from './tauri-commands/openDevtools';
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState('');
-  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [rtspSrc, setRtspSrc] = useState(
+    'rtsp://210.99.70.120:1935/live/cctv050.stream'
+  );
 
-  async function greet() {
+  async function run() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke('greet', { name }));
+    setMessage(await invoke('run', { rtspSrc }));
   }
 
   useCommandWithKeyboardEvent({
@@ -70,17 +72,17 @@ function App() {
         className='row'
         onSubmit={(e) => {
           e.preventDefault();
-          greet();
+          run();
         }}
       >
         <input
           id='greet-input'
-          onChange={(e) => setName(e.currentTarget.value)}
+          onChange={(e) => setRtspSrc(e.currentTarget.value)}
           placeholder='Enter a name...'
         />
         <button type='submit'>Greet</button>
       </form>
-      <p>{greetMsg}</p>
+      <p>{message}</p>
     </main>
   );
 }

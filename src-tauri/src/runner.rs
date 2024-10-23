@@ -25,7 +25,7 @@ use crate::{
     },
 };
 
-pub async fn run(app: &AppHandle) -> Result<(), String> {
+pub async fn run(app: &AppHandle, rtsp_src: &str) -> Result<(), String> {
     let invoker = "run";
     log::info!("project_root_path: {}", project_root_path!());
 
@@ -45,7 +45,7 @@ pub async fn run(app: &AppHandle) -> Result<(), String> {
     let gstreamer_lib_path = get_gstramer_lib_path(app);
     let gstreamer_plugin_path = get_gstramer_plugin_path(app);
     let gstreamer_plugin_scanner_path = get_gstramer_plugin_scanner_path(app);
-    let location = get_location("rtsp://210.99.70.120:1935/live/cctv050.stream");
+    let location = get_location(rtsp_src);
     let playlist_location = get_playlist_location(&src);
     let segment_location = get_segment_location(&output_dir);
 

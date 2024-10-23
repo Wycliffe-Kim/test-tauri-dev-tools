@@ -20,9 +20,12 @@ mod runner;
 mod utils;
 
 #[tauri::command]
-async fn greet(app: AppHandle, name: &str) -> Result<String, String> {
-    let _ = runner::run(&app).await;
-    Ok(format!("Hello, {}! You've been greeted from Rust!", name))
+async fn run(app: AppHandle, rtsp_src: &str) -> Result<String, String> {
+    let _ = runner::run(&app, rtsp_src).await;
+    Ok(format!(
+        "Hello, {}! You've been greeted from Rust!",
+        rtsp_src
+    ))
 }
 
 #[tauri::command]
@@ -87,7 +90,7 @@ async fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
+            run,
             open_app_data_dir,
             open_devtools
         ])
