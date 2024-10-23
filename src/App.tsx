@@ -16,7 +16,7 @@ import { openAppDataDir } from './tauri-commands/openAppDataDir';
 import { openDevtools } from './tauri-commands/openDevtools';
 
 function App() {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState();
   const [rtspSrc, setRtspSrc] = useState(
     'rtsp://210.99.70.120:1935/live/cctv050.stream'
   );
@@ -77,6 +77,7 @@ function App() {
       >
         <input
           id='greet-input'
+          value={rtspSrc}
           onChange={(e) => setRtspSrc(e.currentTarget.value)}
           placeholder='Enter a name...'
         />
