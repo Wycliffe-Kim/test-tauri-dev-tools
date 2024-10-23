@@ -72,14 +72,14 @@ jobs:
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-1.24.8-universal.pkg -o gstreamer-runtime.pkg
           sudo installer -pkg gstreamer-runtime.pkg -target /
+          curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-devel-1.24.8-universal.pkg -o gstreamer-devel.pkg
+          sudo installer -pkg gstreamer-devl.pkg -target /
 
       - name: config gstreamer (macos)
         if: matrix.platform == 'macos-latest'
         run: |
+          ls /Library/Frameworks/GStreamer.framework/Versions/Current
           cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
-          ls
-          ls src-tauri
-          cat src-tauri/tauri.conf.json
           sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
           cat src-tauri/tauri.conf.json
 
@@ -88,10 +88,13 @@ jobs:
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-runtime.msi
           msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart
+          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
+          msiexec /i C:\\gstreamer-devel.msi /quiet /norestart
 
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
         run: |
+          ls D:\\gstreamer\\1.0\\msvc_x86_64
           cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
           sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
           cat src-tauri\\tauri.conf.json
