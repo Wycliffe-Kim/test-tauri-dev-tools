@@ -64,21 +64,13 @@ macro_rules! gstreamer_root_path {
             }
         } else {
             if cfg!(target_os = "windows") {
-                PathBuf::from(format!(
-                    "{}\\assets",
-                    $app.path_resolver()
-                        .resolve_resource($path)
-                        .unwrap_or(PathBuf::default())
-                        .to_string_lossy()
-                ))
+                $app.path_resolver()
+                    .resolve_resource(format!("/assets/{}", $path))
+                    .unwrap_or(PathBuf::default())
             } else if cfg!(target_os = "macos") {
-                PathBuf::from(format!(
-                    "{}/assets",
-                    $app.path_resolver()
-                        .resolve_resource($path)
-                        .unwrap_or(PathBuf::default())
-                        .to_string_lossy()
-                ))
+                $app.path_resolver()
+                    .resolve_resource(format!("\\assets\\{}", $path))
+                    .unwrap_or(PathBuf::default())
             } else {
                 std::path::PathBuf::default()
             }
@@ -103,21 +95,13 @@ macro_rules! gstreamer_root_path {
             }
         } else {
             if cfg!(target_os = "windows") {
-                PathBuf::from(format!(
-                    "{}\\assets",
-                    $app.path_resolver()
-                        .resolve_resource($windows)
-                        .unwrap_or(PathBuf::default())
-                        .to_string_lossy()
-                ))
+                $app.path_resolver()
+                    .resolve_resource(format!("\\assets\\{}", $windows))
+                    .unwrap_or(PathBuf::default())
             } else if cfg!(target_os = "macos") {
-                PathBuf::from(format!(
-                    "{}/assets",
-                    $app.path_resolver()
-                        .resolve_resource($macos)
-                        .unwrap_or(PathBuf::default())
-                        .to_string_lossy()
-                ))
+                $app.path_resolver()
+                    .resolve_resource(format!("/assets/{}", $macos))
+                    .unwrap_or(PathBuf::default())
             } else {
                 std::path::PathBuf::default()
             }
