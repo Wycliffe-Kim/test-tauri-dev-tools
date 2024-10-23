@@ -87,9 +87,9 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-runtime.msi
-          msiexec /i C:\\gstreamer-runtime.msi /quiet /norestart
+          msiexec /i C:\\gstreamer-runtime.msi INSTALLLEVEL=100 /quiet /norestart
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
-          msiexec /i C:\\gstreamer-devel.msi /quiet /norestart
+          msiexec /i C:\\gstreamer-devel.msi INSTALLLEVEL=100 /quiet /norestart
 
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
