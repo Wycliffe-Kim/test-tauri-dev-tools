@@ -57,10 +57,13 @@ jobs:
       - name: config gstreamer (macos)
         if: matrix.platform == 'macos-latest'
         run: |
-          ls /Library/Frameworks/GStreamer.framework/Versions/Current
-          cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
-          sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
-          cat src-tauri/tauri.conf.json
+          dir_path=$(sudo find / -name "gst-launch-1.0" -print -quit | xargs dirname)
+          echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
+          echo "Found directory: $dir_path"
+          ls $dir_path/..
+          # cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
+          # sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+          # cat src-tauri/tauri.conf.json
 
       - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
@@ -72,83 +75,75 @@ jobs:
 
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
+        shell: powershell
         run: |
-          ls D:\\gstreamer\\1.0\\msvc_x86_64
-          cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
-          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
-          cat src-tauri\\tauri.conf.json
+          $gstreamerFile = Get-ChildItem -Path "C:\" -Filter "gst-launch-1.0" -Recurse | Select-Object -First 1
+          $dir_path = $gstreamerFile.DirectoryName
+          echo "GSTREAMER_DIR=$dir_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "Found directory: $dir_path"
+          ls $dir_path\\..
+          # cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
+          # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+          # cat src-tauri\\tauri.conf.json
 
-      - name: setup node
-        uses: actions/setup-node@master
-        with:
-          node-version: 18.x
-
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
-
-      - name: Install frontend dependencies
-        run: yarn install --network-timeout 100000
-
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: build
-        run: yarn tauri build
-
-      - name: tag version (macos)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          cd src-tauri/target/release/bundle/dmg
-          mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2).dmg
-          ls
-
-      - name: tag version (windows)
-        if: matrix.platform == 'windows-latest'
-        shell: cmd
-        run: |
-          cd src-tauri/target/release/bundle/msi
-          rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)_x64_en-US.msi
-          ls
-
-      - name: release (macos)
-        uses: ncipollo/release-action@v1
-        if: matrix.platform == 'macos-latest'
-        with:
-          name: develop
-          commit: develop
-          allowUpdates: true
-          artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
-
-      - name: release (windows)
-        uses: ncipollo/release-action@v1
-        if: matrix.platform == 'windows-latest'
-        with:
-          name: develop
-          commit: develop
-          allowUpdates: true
-          artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
-
-      # - uses: tauri-apps/tauri-action@v0
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     VERSION: ${{ steps.get-version.outputs.result }}
+      # - name: setup node
+      #   uses: actions/setup-node@master
       #   with:
-      #     projectPath: src-tauri/
-      #     tagName: $VERSION
-      #     releaseName: $VERSION
-      #     releaseBody: 'See the assets to download this version and install.'
-      #     releaseDraft: true
-      #     prerelease: false
-      #     args: ${{ matrix.args }}
+      #     node-version: 18.x
+
+      # - name: install Rust stable
+      #   uses: dtolnay/rust-toolchain@stable
+      #   with:
+      #     targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      # - name: Rust cache
+      #   uses: swatinem/rust-cache@v2
+      #   with:
+      #     workspaces: './src-tauri -> target'
+
+      # - name: Install frontend dependencies
+      #   run: yarn install --network-timeout 100000
+
+      # - name: Cache Yarn dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.cache/yarn
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-yarn-
+
+      # - name: build
+      #   run: yarn tauri build
+
+      # - name: tag version (macos)
+      #   if: matrix.platform == 'macos-latest'
+      #   run: |
+      #     cd src-tauri/target/release/bundle/dmg
+      #     mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2).dmg
+      #     ls
+
+      # - name: tag version (windows)
+      #   if: matrix.platform == 'windows-latest'
+      #   shell: cmd
+      #   run: |
+      #     cd src-tauri/target/release/bundle/msi
+      #     rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)_x64_en-US.msi
+      #     ls
+
+      # - name: release (macos)
+      #   uses: ncipollo/release-action@v1
+      #   if: matrix.platform == 'macos-latest'
+      #   with:
+      #     name: develop
+      #     commit: develop
+      #     allowUpdates: true
+      #     artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
+
+      # - name: release (windows)
+      #   uses: ncipollo/release-action@v1
+      #   if: matrix.platform == 'windows-latest'
+      #   with:
+      #     name: develop
+      #     commit: develop
+      #     allowUpdates: true
+      #     artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
