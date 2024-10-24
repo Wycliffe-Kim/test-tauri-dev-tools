@@ -141,6 +141,7 @@ jobs:
         run: |
           cd src-tauri/target/release/bundle/dmg
           mv "test tauri dev tools_0.0.1_aarch64.dmg" "test tauri dev tool_$VERSION.dmg"
+          ls
 
       - name: tag version (windows)
         if: matrix.platform == 'windows-latest'
