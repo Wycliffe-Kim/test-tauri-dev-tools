@@ -136,28 +136,22 @@ jobs:
 
       - name: tag version (macos)
         if: matrix.platform == 'macos-latest'
-        env:
-          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
         run: |
           cd src-tauri/target/release/bundle/dmg
-          mv "test tauri dev tools_0.0.1_aarch64.dmg" "test tauri dev tool_$(echo $VERSION).dmg"
+          mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}.dmg"
           ls
 
       - name: tag version (windows)
         if: matrix.platform == 'windows-latest'
-        env:
-          VERSION: ${{ steps.get-version.outputs.result }}
         shell: cmd
         run: |
           cd src-tauri/target/release/bundle/msi
-          rename "test tauri dev tools_0.0.1_x64_en-US.msi" "test tauri dev tools_$(echo $VERSION)_x64_en-US.msi"
+          rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}_x64_en-US.msi"
           ls
 
       - name: release (macos)
         uses: ncipollo/release-action@v1
         if: matrix.platform == 'macos-latest'
-        env:
-          VERSION: ${{ steps.get-version.outputs.result }}
         with:
           allowUpdates: true
           artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
@@ -165,8 +159,6 @@ jobs:
       - name: release (windows)
         uses: ncipollo/release-action@v1
         if: matrix.platform == 'windows-latest'
-        env:
-          VERSION: ${{ steps.get-version.outputs.result }}
         with:
           allowUpdates: true
           artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
