@@ -11,8 +11,8 @@ name: 'CD'
 
 on:
   push:
-    branches:
-      - develop
+    tags:
+      - v*
 
 jobs:
   CD:
@@ -128,13 +128,20 @@ jobs:
       - name: build
         run: yarn tauri build
 
+      - name: tag version
+        env:
+          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
+        run: cd src-tauri/target/aarch64-apple-darwin/release/bundle/dmg
+          mv test tauri dev tools_0.0.1_aarch64.dmg test tauri dev tool_$VERSION.dmg
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
         with:
           projectPath: src-tauri/
-          tagName: v__VERSION__
-          releaseName: 'v__VERSION__'
+          tagName: $VERSION
+          releaseName: $VERSION
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
