@@ -45,123 +45,103 @@ jobs:
           script: return "$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)"
           result-encoding: string
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: echo
+        run: echo ${{ steps.get-version.outputs.result }}
 
-      # - name: Setup Git Credentials
-      #   run: git config --global url."https://${{ secrets.CARGO_GITHUB_TOKEN }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+      # - name: Checkout repository
+      #   uses: actions/checkout@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: install dependencies (ubuntu only)
-      #   if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
+      # - name: install gstreamer (macos)
+      #   if: matrix.platform == 'macos-latest'
       #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-      #   # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
-      #   # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
+      #     curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-1.24.8-universal.pkg -o gstreamer-runtime.pkg
+      #     sudo installer -pkg gstreamer-runtime.pkg -target /
+      #     curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-devel-1.24.8-universal.pkg -o gstreamer-devel.pkg
+      #     sudo installer -pkg gstreamer-devel.pkg -target /
 
-      # - name: install dependencies (macos only)
-      #   if: matrix.platform == 'macos-latest' # This must match the platform value defined above.
+      # - name: config gstreamer (macos)
+      #   if: matrix.platform == 'macos-latest'
       #   run: |
-      #     brew install protobuf
+      #     ls /Library/Frameworks/GStreamer.framework/Versions/Current
+      #     cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
+      #     sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+      #     cat src-tauri/tauri.conf.json
 
-      # - name: install dependencies (windows only)
-      #   if: matrix.platform == 'windows-latest' # This must match the platform value defined above.
+      # - name: install gstreamer (windows)
+      #   if: matrix.platform == 'windows-latest'
       #   run: |
-      #     choco install -y protoc
-      #     echo "::add-path::C:\\Program Files\\Protobuf\\bin"
-      #     protoc --version
+      #     curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-runtime.msi
+      #     msiexec /i C:\\gstreamer-runtime.msi INSTALLLEVEL=100 /quiet /norestart
+      #     curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
+      #     msiexec /i C:\\gstreamer-devel.msi INSTALLLEVEL=100 /quiet /norestart
 
-      - name: install gstreamer (macos)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-1.24.8-universal.pkg -o gstreamer-runtime.pkg
-          sudo installer -pkg gstreamer-runtime.pkg -target /
-          curl -L https://gstreamer.freedesktop.org/data/pkg/osx/1.24.8/gstreamer-1.0-devel-1.24.8-universal.pkg -o gstreamer-devel.pkg
-          sudo installer -pkg gstreamer-devel.pkg -target /
+      # - name: config gstreamer (windows)
+      #   if: matrix.platform == 'windows-latest'
+      #   run: |
+      #     ls D:\\gstreamer\\1.0\\msvc_x86_64
+      #     cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
+      #     sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+      #     cat src-tauri\\tauri.conf.json
 
-      - name: config gstreamer (macos)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          ls /Library/Frameworks/GStreamer.framework/Versions/Current
-          cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
-          sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
-          cat src-tauri/tauri.conf.json
+      # - name: setup node
+      #   uses: actions/setup-node@master
+      #   with:
+      #     node-version: 18.x
 
-      - name: install gstreamer (windows)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-runtime.msi
-          msiexec /i C:\\gstreamer-runtime.msi INSTALLLEVEL=100 /quiet /norestart
-          curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
-          msiexec /i C:\\gstreamer-devel.msi INSTALLLEVEL=100 /quiet /norestart
+      # - name: install Rust stable
+      #   uses: dtolnay/rust-toolchain@stable
+      #   with:
+      #     targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: config gstreamer (windows)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          ls D:\\gstreamer\\1.0\\msvc_x86_64
-          cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
-          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
-          cat src-tauri\\tauri.conf.json
+      # - name: Rust cache
+      #   uses: swatinem/rust-cache@v2
+      #   with:
+      #     workspaces: './src-tauri -> target'
 
-      - name: setup node
-        uses: actions/setup-node@master
-        with:
-          node-version: 18.x
+      # - name: Install frontend dependencies
+      #   run: yarn install --network-timeout 100000
 
-      - name: install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      # - name: Cache Yarn dependencies
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ~/.cache/yarn
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-yarn-
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: './src-tauri -> target'
+      # - name: build
+      #   run: yarn tauri build
 
-      - name: Install frontend dependencies
-        run: yarn install --network-timeout 100000
+      # - name: tag version (macos)
+      #   if: matrix.platform == 'macos-latest'
+      #   run: |
+      #     cd src-tauri/target/release/bundle/dmg
+      #     mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}.dmg"
+      #     ls
 
-      - name: Cache Yarn dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      # - name: tag version (windows)
+      #   if: matrix.platform == 'windows-latest'
+      #   shell: cmd
+      #   run: |
+      #     cd src-tauri/target/release/bundle/msi
+      #     rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}_x64_en-US.msi"
+      #     ls
 
-      - name: build
-        run: yarn tauri build
+      # - name: release (macos)
+      #   uses: ncipollo/release-action@v1
+      #   if: matrix.platform == 'macos-latest'
+      #   with:
+      #     allowUpdates: true
+      #     artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
 
-      - name: tag version (macos)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          cd src-tauri/target/release/bundle/dmg
-          mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}.dmg"
-          ls
-
-      - name: tag version (windows)
-        if: matrix.platform == 'windows-latest'
-        shell: cmd
-        run: |
-          cd src-tauri/target/release/bundle/msi
-          rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_${{ steps.get-version.outputs.result }}_x64_en-US.msi"
-          ls
-
-      - name: release (macos)
-        uses: ncipollo/release-action@v1
-        if: matrix.platform == 'macos-latest'
-        with:
-          allowUpdates: true
-          artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
-
-      - name: release (windows)
-        uses: ncipollo/release-action@v1
-        if: matrix.platform == 'windows-latest'
-        with:
-          allowUpdates: true
-          artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
+      # - name: release (windows)
+      #   uses: ncipollo/release-action@v1
+      #   if: matrix.platform == 'windows-latest'
+      #   with:
+      #     allowUpdates: true
+      #     artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
 
       # - uses: tauri-apps/tauri-action@v0
       #   env:
