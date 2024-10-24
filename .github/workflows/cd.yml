@@ -39,6 +39,12 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
+      - uses: actions/github-script@v7
+        id: get-version
+        with:
+          script: return $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
+          result-encoding: string
+
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -139,21 +145,37 @@ jobs:
       - name: tag version (windows)
         if: matrix.platform == 'windows-latest'
         env:
-          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
+          VERSION: ${{ steps.get-version.outputs.result }}
         shell: cmd
         run: |
-          cd src-tauri/target/release/bundle/dmg
-          rename "test tauri dev tools_0.0.1_aarch64.dmg" "test tauri dev tool_$VERSION.dmg"
+          cd src-tauri/target/release/bundle/msi
+          rename "test tauri dev tools_0.0.1_x64_en-US.msi" "test tauri dev tools_$VERSION_x64_en-US.msi"
 
-      - uses: tauri-apps/tauri-action@v0
+      - name: release (macos)
+        uses: ncipollo/release-action@v1
+        if: matrix.platform == 'macos-latest'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
+          VERSION: ${{ steps.get-version.outputs.result }}
         with:
-          projectPath: src-tauri/
-          tagName: $VERSION
-          releaseName: $VERSION
-          releaseBody: 'See the assets to download this version and install.'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
+          artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools_0.0.1_aarch64.dmg'
+
+      - name: release (windows)
+        uses: ncipollo/release-action@v1
+        if: matrix.platform == 'windows-latest'
+        env:
+          VERSION: ${{ steps.get-version.outputs.result }}
+        with:
+          artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools_$VERSION_x64_en-US.msi'
+
+      # - uses: tauri-apps/tauri-action@v0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     VERSION: ${{ steps.get-version.outputs.result }}
+      #   with:
+      #     projectPath: src-tauri/
+      #     tagName: $VERSION
+      #     releaseName: $VERSION
+      #     releaseBody: 'See the assets to download this version and install.'
+      #     releaseDraft: true
+      #     prerelease: false
+      #     args: ${{ matrix.args }}
