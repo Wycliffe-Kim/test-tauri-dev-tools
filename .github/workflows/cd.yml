@@ -46,7 +46,9 @@ jobs:
           result-encoding: string
 
       - name: echo
-        run: echo ${{ steps.get-version.outputs.result }}
+        env:
+          VERSION: ${{ steps.get-version.outputs.result }}
+        run: echo $VERSION
 
       # - name: Checkout repository
       #   uses: actions/checkout@v3
