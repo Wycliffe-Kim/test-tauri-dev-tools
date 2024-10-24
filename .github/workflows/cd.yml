@@ -77,7 +77,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: bash
         run: |
-          dir_path=$(sudo find / -name "gst-launch-1.0" -print -quit | xargs dirname)
+          dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
           echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
           echo "Found directory: $dir_path"
           ls $dir_path\\..
