@@ -11,8 +11,10 @@ name: 'CD'
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - develop
+    # tags:
+    #   - v*
 
 jobs:
   CD:
@@ -124,6 +126,8 @@ jobs:
         uses: ncipollo/release-action@v1
         if: matrix.platform == 'macos-latest'
         with:
+          name: develop
+          commit: develop
           allowUpdates: true
           artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools*.dmg'
 
@@ -131,6 +135,8 @@ jobs:
         uses: ncipollo/release-action@v1
         if: matrix.platform == 'windows-latest'
         with:
+          name: develop
+          commit: develop
           allowUpdates: true
           artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools*.msi'
 
