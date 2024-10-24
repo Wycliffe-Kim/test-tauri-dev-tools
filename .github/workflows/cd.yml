@@ -11,8 +11,10 @@ name: 'CD'
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - develop
+    # tags:
+    #   - v*
 
 jobs:
   CD:
@@ -42,13 +44,13 @@ jobs:
       - uses: actions/github-script@v7
         id: get-version
         with:
-          script: return $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
+          script: return "$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)"
           result-encoding: string
 
       - name: echo
         env:
           VERSION: ${{ steps.get-version.outputs.result }}
-        run: echo $VERSION
+        run: echo $(echo $VERSION)
 
       # - name: Checkout repository
       #   uses: actions/checkout@v3
