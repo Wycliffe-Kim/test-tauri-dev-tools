@@ -133,14 +133,7 @@ jobs:
         env:
           VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
         run: |
-          echo "ls src-tauri/target/aarch64-apple-darwin"
-          ls src-tauri/target/aarch64-apple-darwin
-          echo "ls src-tauri/target/aarch64-apple-darwin/release"
-          ls src-tauri/target/aarch64-apple-darwin/release
-          echo "ls src-tauri/target/release/bundle"
-          ls src-tauri/target/release/bundle
-          echo -----
-          cd src-tauri/target/aarch64-apple-darwin/release/bundle/dmg
+          cd src-tauri/target/release/bundle/dmg
           mv test tauri dev tools_0.0.1_aarch64.dmg test tauri dev tool_$VERSION.dmg
 
       - uses: tauri-apps/tauri-action@v0
