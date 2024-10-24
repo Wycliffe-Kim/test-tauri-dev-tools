@@ -150,6 +150,7 @@ jobs:
         run: |
           cd src-tauri/target/release/bundle/msi
           rename "test tauri dev tools_0.0.1_x64_en-US.msi" "test tauri dev tools_$VERSION_x64_en-US.msi"
+          ls
 
       - name: release (macos)
         uses: ncipollo/release-action@v1
@@ -157,7 +158,7 @@ jobs:
         env:
           VERSION: ${{ steps.get-version.outputs.result }}
         with:
-          artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools_{{ env.VERSION }}_aarch64.dmg'
+          artifacts: 'src-tauri/target/release/bundle/dmg/test tauri dev tools_$VERSION_aarch64.dmg'
 
       - name: release (windows)
         uses: ncipollo/release-action@v1
@@ -165,7 +166,7 @@ jobs:
         env:
           VERSION: ${{ steps.get-version.outputs.result }}
         with:
-          artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools_{{ env.VERSION }}_x64_en-US.msi'
+          artifacts: 'src-tauri/target/release/bundle/msi/test tauri dev tools_$VERSION_x64_en-US.msi'
 
       # - uses: tauri-apps/tauri-action@v0
       #   env:
