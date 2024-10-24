@@ -133,14 +133,11 @@ jobs:
         env:
           VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
         run: |
+          echo "ls src-tauri/target/aarch64-apple-darwin"
           ls src-tauri/target/aarch64-apple-darwin
-          echo -----
+          echo "ls src-tauri/target/aarch64-apple-darwin/release"
           ls src-tauri/target/aarch64-apple-darwin/release
-          echo -----
-          ls src-tauri/target/aarch64-apple-darwin/release/bundle
-          echo -----
-          ls src-tauri/target/aarch64-apple-darwin/release/bundle
-          echo -----
+          echo "ls src-tauri/target/release/bundle"
           ls src-tauri/target/release/bundle
           echo -----
           cd src-tauri/target/aarch64-apple-darwin/release/bundle/dmg
