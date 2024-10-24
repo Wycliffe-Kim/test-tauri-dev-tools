@@ -80,7 +80,7 @@ jobs:
           $drives = Get-PSDrive -PSProvider FileSystem
           $foundFile = $null
           foreach ($drive in $drives) {
-              $foundFile = Get-ChildItem -Path "$($drive.Name):\" -Filter "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+              $foundFile = Get-ChildItem -Path "$($drive.Name):\\" -Filter "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
               if ($foundFile) {
                   break
               }
