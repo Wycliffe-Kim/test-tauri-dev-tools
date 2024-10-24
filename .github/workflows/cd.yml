@@ -42,9 +42,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - name: echo
-        env:
-          VERSION: $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
-        run: echo $VERSION
+        run: echo $(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)
 
       # - name: Checkout repository
       #   uses: actions/checkout@v3
