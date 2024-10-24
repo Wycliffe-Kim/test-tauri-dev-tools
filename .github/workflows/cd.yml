@@ -109,7 +109,7 @@ jobs:
         if: matrix.platform == 'macos-latest'
         run: |
           cd src-tauri/target/release/bundle/dmg
-          mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2).dmg"
+          mv test\ tauri\ dev\ tools_0.0.1_aarch64.dmg test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2).dmg
           ls
 
       - name: tag version (windows)
@@ -117,7 +117,7 @@ jobs:
         shell: cmd
         run: |
           cd src-tauri/target/release/bundle/msi
-          rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)_x64_en-US.msi"
+          rename test\ tauri\ dev\ tools_0.0.1_x64_en-US.msi test\ tauri\ dev\ tools_$(echo ${GITHUB_REF_NAME} | cut -d_ -f 2)_x64_en-US.msi
           ls
 
       - name: release (macos)
