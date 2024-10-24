@@ -80,7 +80,7 @@ jobs:
           dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
           echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
           echo "Found directory: $dir_path"
-          ls $dir_path\\..
+          ls $dir_path/..
           # cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
           # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
           # cat src-tauri\\tauri.conf.json
