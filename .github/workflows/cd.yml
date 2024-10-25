@@ -61,10 +61,10 @@ jobs:
           dir_path=$(echo "$dir_path" | sed 's|/bin$||')
           echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
           echo "Found directory: $dir_path"
-          ls
-          # cp -r /Library/Frameworks/GStreamer.framework/Versions/Current src-tauri/assets
-          # sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
-          # cat src-tauri/tauri.conf.json
+          cp -r $dir_path src-tauri/assets
+          ls src-tauri/assets
+          sed -i '' 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri/tauri.conf.json
+          cat src-tauri/tauri.conf.json
 
       - name: install gstreamer (windows)
         if: matrix.platform == 'windows-latest'
@@ -82,10 +82,10 @@ jobs:
           dir_path=$(echo "$dir_path" | sed 's|/bin$||')
           echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
           echo "Found directory: $dir_path"
-          ls
-          # cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
-          # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
-          # cat src-tauri\\tauri.conf.json
+          cp -r $dir_path src-tauri\\assets
+          ls src-tauri\\assets
+          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+          cat src-tauri\\tauri.conf.json
 
       # - name: config gstreamer (windows)
       #   if: matrix.platform == 'windows-latest'
