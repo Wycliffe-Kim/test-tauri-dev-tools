@@ -74,18 +74,18 @@ jobs:
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
           msiexec /i C:\\gstreamer-devel.msi INSTALLLEVEL=100 /quiet /norestart
 
-      - name: config gstreamer (windows)
-        if: matrix.platform == 'windows-latest'
-        shell: bash
-        run: |
-          dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
-          dir_path=$(echo "$dir_path" | sed 's|/bin$||')
-          echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
-          echo "Found directory: $dir_path"
-          cp -r $dir_path src-tauri\\assets
-          ls src-tauri\\assets
-          sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
-          cat src-tauri\\tauri.conf.json
+      # - name: config gstreamer (windows)
+      #   if: matrix.platform == 'windows-latest'
+      #   shell: bash
+      #   run: |
+      #     dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
+      #     dir_path=$(echo "$dir_path" | sed 's|/bin$||')
+      #     echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
+      #     echo "Found directory: $dir_path"
+      #     cp -r $dir_path src-tauri\\assets
+      #     ls src-tauri\\assets
+      #     sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+      #     cat src-tauri\\tauri.conf.json
 
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
