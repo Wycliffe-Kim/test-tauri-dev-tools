@@ -87,26 +87,26 @@ jobs:
           sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
           cat src-tauri\\tauri.conf.json
 
-      # - name: config gstreamer (windows)
-      #   if: matrix.platform == 'windows-latest'
-      #   shell: powershell
-      #   run: |
-      #     $drives = Get-PSDrive -PSProvider FileSystem
-      #     $foundFile = $null
-      #     foreach ($drive in $drives) {
-      #         $foundFile = Get-ChildItem -Path "$($drive.Name):\\" -Filter "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-      #         if ($foundFile) {
-      #             break
-      #         }
-      #     }
-      #     if ($foundFile) {
-      #         $dir_path = $foundFile.DirectoryName
-      #         echo "GSTREAMER_DIR=$dir_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-      #         echo "Found directory: $dir_path"
-      #         ls $dir_path\\..
-      #     } else {
-      #         echo "File not found"
-      #     }
+      - name: config gstreamer (windows)
+        if: matrix.platform == 'windows-latest'
+        shell: powershell
+        run: |
+          $drives = Get-PSDrive -PSProvider FileSystem
+          $foundFile = $null
+          foreach ($drive in $drives) {
+              $foundFile = Get-ChildItem -Path "$($drive.Name):\\" -Include "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+              if ($foundFile) {
+                  break
+              }
+          }
+          if ($foundFile) {
+              $dir_path = $foundFile.DirectoryName
+              echo "GSTREAMER_DIR=$dir_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+              echo "Found directory: $dir_path"
+              ls $dir_path\\..
+          } else {
+              echo "File not found"
+          }
       #     # cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
       #     # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
       #     # cat src-tauri\\tauri.conf.json
