@@ -74,39 +74,40 @@ jobs:
           curl -L https://gstreamer.freedesktop.org/data/pkg/windows/1.24.8/msvc/gstreamer-1.0-devel-msvc-x86_64-1.24.8.msi -o C:\\gstreamer-devel.msi
           msiexec /i C:\\gstreamer-devel.msi INSTALLLEVEL=100 /quiet /norestart
 
-      # - name: config gstreamer (windows)
-      #   if: matrix.platform == 'windows-latest'
-      #   shell: bash
-      #   run: |
-      #     dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
-      #     dir_path=$(echo "$dir_path" | sed 's|/bin$||')
-      #     echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
-      #     echo "Found directory: $dir_path"
-      #     cp -r $dir_path src-tauri\\assets
-      #     ls src-tauri\\assets
-      #     sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
-      #     cat src-tauri\\tauri.conf.json
-
       - name: config gstreamer (windows)
         if: matrix.platform == 'windows-latest'
-        shell: powershell
+        # shell: bash
         run: |
-          $drives = Get-PSDrive -PSProvider FileSystem
-          $foundFile = $null
-          foreach ($drive in $drives) {
-              $foundFile = Get-ChildItem -Path "$($drive.Name):\\" -Include "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-              if ($foundFile) {
-                  break
-              }
-          }
-          if ($foundFile) {
-              $dir_path = $foundFile.DirectoryName
-              echo "GSTREAMER_DIR=$dir_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-              echo "Found directory: $dir_path"
-              ls $dir_path\\..
-          } else {
-              echo "File not found"
-          }
+          ls
+          # dir_path=$(find \\ -name "gst-launch-1.0.exe" -print -quit | xargs dirname)
+          # dir_path=$(echo "$dir_path" | sed 's|/bin$||')
+          # echo "GSTREAMER_DIR=$dir_path" >> $GITHUB_ENV
+          # echo "Found directory: $dir_path"
+          # cp -r $dir_path src-tauri\\assets
+          # ls src-tauri\\assets
+          # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
+          # cat src-tauri\\tauri.conf.json
+
+      # - name: config gstreamer (windows)
+      #   if: matrix.platform == 'windows-latest'
+      #   shell: powershell
+      #   run: |
+      #     $drives = Get-PSDrive -PSProvider FileSystem
+      #     $foundFile = $null
+      #     foreach ($drive in $drives) {
+      #         $foundFile = Get-ChildItem -Path "$($drive.Name):\\" -Include "gst-launch-1.0.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+      #         if ($foundFile) {
+      #             break
+      #         }
+      #     }
+      #     if ($foundFile) {
+      #         $dir_path = $foundFile.DirectoryName
+      #         echo "GSTREAMER_DIR=$dir_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      #         echo "Found directory: $dir_path"
+      #         ls $dir_path\\..
+      #     } else {
+      #         echo "File not found"
+      #     }
       #     # cp -r D:\\gstreamer\\1.0\\msvc_x86_64 src-tauri\\assets
       #     # sed -i 's/"bundle": {/"bundle": {\n      "resources": ["assets"],/' src-tauri\\tauri.conf.json
       #     # cat src-tauri\\tauri.conf.json
